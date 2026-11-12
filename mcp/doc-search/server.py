@@ -14,9 +14,33 @@ Run (stdio):  python server.py
 """
 import os
 import re
+import sys
 from pathlib import Path
 
 from fastmcp import FastMCP
+
+
+def _force_utf8_stdio() -> None:
+    """Force UTF-8 on stdin/stdout/stderr.
+
+    On Windows machines whose system locale is not UTF-8 (e.g. Chinese
+    Windows defaults Python's stdio to GBK), a stdio MCP server otherwise
+    emits non-UTF-8 bytes. Strict hosts (Codex's rmcp launcher) read the
+    streams as UTF-8, fail to decode them, and tear the connection down
+    during the initialize handshake. Pinning UTF-8 here makes the server
+    behave identically on any locale. Clients can also set PYTHONUTF8=1
+    in the server env; doing both is harmless.
+    """
+    for stream in (sys.stdin, sys.stdout, sys.stderr):
+        reconfigure = getattr(stream, "reconfigure", None)
+        if reconfigure is not None:
+            try:
+                reconfigure(encoding="utf-8", errors="replace")
+            except (ValueError, OSError):
+                pass
+
+
+_force_utf8_stdio()
 
 
 def workspace_root() -> Path:
@@ -49,7 +73,14 @@ def _doc_title(text: str, path: Path) -> str:
     return path.stem
 
 
-@mcp.tool()
+# Every tool here only reads local files. Declaring that in the MCP
+# annotations matters: clients such as Codex auto-approve read-only
+# tools but stop un-annotated ones for manual approval (and refuse them
+# outright in non-interactive runs).
+READ_ONLY = {"readOnlyHint": True, "destructiveHint": False, "openWorldHint": False}
+
+
+@mcp.tool(annotations=READ_ONLY)
 def search_docs(query: str, limit: int = 8) -> list[dict]:
     """Keyword search over the workspace documentation repos.
 
@@ -87,7 +118,7 @@ def search_docs(query: str, limit: int = 8) -> list[dict]:
     return results[:limit]
 
 
-@mcp.tool()
+@mcp.tool(annotations=READ_ONLY)
 def get_doc(path: str) -> str:
     """Fetch one Markdown document by workspace-relative path, e.g.
     "projects/taskflow-docs/system-overview.md" or "tickets/TF-101.md".
@@ -123,7 +154,7 @@ def _parse_ticket(p: Path) -> dict:
     }
 
 
-@mcp.tool()
+@mcp.tool(annotations=READ_ONLY)
 def list_tickets(status: str | None = None) -> list[dict]:
     """List the demo tickets (Markdown files in tickets/, standing in for an
     issue tracker). Optionally filter by status: open, in-progress, done.
@@ -139,4 +170,7 @@ def list_tickets(status: str | None = None) -> list[dict]:
 
 
 if __name__ == "__main__":
-    mcp.run()  # stdio transport by default
+    # No startup banner: a stdio server should keep stderr quiet, and the
+    # banner's box-drawing characters are exactly the kind of non-ASCII
+    # output that breaks under non-UTF-8 locales (see _force_utf8_stdio).
+    mcp.run(show_banner=False)  # stdio transport by default

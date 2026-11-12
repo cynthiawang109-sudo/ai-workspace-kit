@@ -22,3 +22,13 @@ bearer_token_env_var = "GITHUB_PAT"
 # [mcp_servers.doc-search]
 # command = 'C:\path\to\ai-workspace-kit\mcp\doc-search\.venv\Scripts\python.exe'
 # args = ['C:\path\to\ai-workspace-kit\mcp\doc-search\server.py']
+#
+# On Windows with a non-UTF-8 system locale (e.g. Chinese Windows, where
+# Python defaults stdio to GBK), also pin the server's encoding — Codex
+# reads MCP stdio streams as UTF-8 and drops the connection during the
+# initialize handshake if the server emits GBK bytes. (server.py also
+# forces UTF-8 itself; this env is belt and braces.)
+#
+# [mcp_servers.doc-search.env]
+# PYTHONUTF8 = "1"
+# PYTHONIOENCODING = "utf-8"
