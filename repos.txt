@@ -1,0 +1,7 @@
+# Workspace manifest: <name> <git-url> per line.
+# Add a repo here (and a row in README.md) to include it in sync.
+taskflow-docs https://github.com/cynthiawang109-sudo/taskflow-docs.git
+taskflow-api-docs https://github.com/cynthiawang109-sudo/taskflow-api-docs.git
+code-reviewer https://github.com/cynthiawang109-sudo/code-reviewer.git
+release-assistant https://github.com/cynthiawang109-sudo/release-assistant.git
+demo-app https://github.com/cynthiawang109-sudo/demo-app.git

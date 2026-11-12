@@ -1,0 +1,6 @@
+# Synced project checkouts are independent repositories; the meta-repo
+# tracks only the manifest and workspace-level files.
+projects/*
+!projects/.gitkeep
+.env
+*.local.*

@@ -1,0 +1,24 @@
+# Example Codex MCP configuration for this workspace.
+# Copy the entries you want into ~/.codex/config.toml (user level) —
+# do NOT copy real tokens into this repository. Servers read credentials
+# from environment variables only.
+#
+# For Claude Code, the equivalent registrations are:
+#   claude mcp add --transport http github https://api.githubcopilot.com/mcp/
+#   claude mcp add doc-search -- python -m doc_search.server
+
+# GitHub's official MCP server (hosted remote endpoint — no Docker needed).
+# Auth: set GITHUB_PAT in your environment (fine-grained, least privilege),
+# or use `codex mcp login github` if your client build supports OAuth.
+[mcp_servers.github]
+url = "https://api.githubcopilot.com/mcp/"
+bearer_token_env_var = "GITHUB_PAT"
+
+# Custom doc-search server built in milestone M2 (see mcp/README.md).
+# Searches this workspace's documentation repos and local Markdown tickets.
+# Uncomment once M2 lands:
+#
+# [mcp_servers.doc-search]
+# command = "python"
+# args = ["-m", "doc_search.server"]
+# cwd = "mcp/doc-search"
