@@ -4,3 +4,5 @@ projects/*
 !projects/.gitkeep
 .env
 *.local.*
+.venv/
+__pycache__/

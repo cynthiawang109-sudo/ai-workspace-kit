@@ -1,0 +1,142 @@
+"""doc-search — an MCP server for the ai-workspace-kit workspace.
+
+Tools (all read-only, all local files, no credentials):
+
+- search_docs(query)   keyword search across the documentation repos that
+                       sync checked out under projects/
+- get_doc(path)        fetch one document by workspace-relative path
+- list_tickets(status) list the demo tickets stored as Markdown in tickets/
+
+Workspace root resolution: the AI_WORKSPACE_ROOT environment variable wins;
+otherwise the server assumes it lives at <root>/mcp/doc-search/server.py.
+
+Run (stdio):  python server.py
+"""
+import os
+import re
+from pathlib import Path
+
+from fastmcp import FastMCP
+
+
+def workspace_root() -> Path:
+    env = os.environ.get("AI_WORKSPACE_ROOT")
+    if env:
+        return Path(env).resolve()
+    return Path(__file__).resolve().parents[2]
+
+
+ROOT = workspace_root()
+PROJECTS_DIR = ROOT / "projects"
+TICKETS_DIR = ROOT / "tickets"
+
+mcp = FastMCP("doc-search")
+
+
+def _iter_docs():
+    if not PROJECTS_DIR.exists():
+        return
+    for p in sorted(PROJECTS_DIR.rglob("*.md")):
+        if ".git" in p.parts:
+            continue
+        yield p
+
+
+def _doc_title(text: str, path: Path) -> str:
+    for line in text.splitlines():
+        if line.startswith("# "):
+            return line[2:].strip()
+    return path.stem
+
+
+@mcp.tool()
+def search_docs(query: str, limit: int = 8) -> list[dict]:
+    """Keyword search over the workspace documentation repos.
+
+    Ranking is deliberately simple and inspectable: a hit in a document
+    title counts 3, in a heading 2, in body text 1. Returns workspace-
+    relative path, title, score, and the first matching line as a snippet.
+    """
+    terms = [t for t in re.split(r"\W+", query.lower()) if t]
+    if not terms:
+        return []
+    results = []
+    for p in _iter_docs():
+        text = p.read_text(encoding="utf-8", errors="replace")
+        title = _doc_title(text, p)
+        score = sum(3 * title.lower().count(t) for t in terms)
+        snippet = ""
+        for line in text.splitlines():
+            low = line.lower()
+            hits = sum(low.count(t) for t in terms)
+            if not hits:
+                continue
+            score += 2 * hits if line.lstrip().startswith("#") else hits
+            if not snippet:
+                snippet = line.strip()[:200]
+        if score:
+            results.append(
+                {
+                    "path": p.relative_to(ROOT).as_posix(),
+                    "title": title,
+                    "score": score,
+                    "snippet": snippet,
+                }
+            )
+    results.sort(key=lambda r: (-r["score"], r["path"]))
+    return results[:limit]
+
+
+@mcp.tool()
+def get_doc(path: str) -> str:
+    """Fetch one Markdown document by workspace-relative path, e.g.
+    "projects/taskflow-docs/system-overview.md" or "tickets/TF-101.md".
+    Paths outside projects/ and tickets/ are refused.
+    """
+    target = (ROOT / path).resolve()
+    allowed = [PROJECTS_DIR.resolve(), TICKETS_DIR.resolve()]
+    if (
+        target.suffix != ".md"
+        or not target.exists()
+        or not any(str(target).startswith(str(a)) for a in allowed)
+    ):
+        raise ValueError(f"document not found or not allowed: {path}")
+    return target.read_text(encoding="utf-8", errors="replace")
+
+
+def _parse_ticket(p: Path) -> dict:
+    text = p.read_text(encoding="utf-8", errors="replace")
+    meta: dict[str, str] = {}
+    if text.startswith("---"):
+        parts = text.split("---", 2)
+        if len(parts) >= 3:
+            for line in parts[1].splitlines():
+                if ":" in line:
+                    k, v = line.split(":", 1)
+                    meta[k.strip()] = v.strip()
+    return {
+        "id": meta.get("id", p.stem),
+        "title": meta.get("title", ""),
+        "status": meta.get("status", ""),
+        "priority": meta.get("priority", ""),
+        "path": p.relative_to(ROOT).as_posix(),
+    }
+
+
+@mcp.tool()
+def list_tickets(status: str | None = None) -> list[dict]:
+    """List the demo tickets (Markdown files in tickets/, standing in for an
+    issue tracker). Optionally filter by status: open, in-progress, done.
+    """
+    out = []
+    if TICKETS_DIR.exists():
+        for p in sorted(TICKETS_DIR.glob("*.md")):
+            t = _parse_ticket(p)
+            if status and t["status"] != status:
+                continue
+            out.append(t)
+    return out
+
+
+if __name__ == "__main__":
+    mcp.run()  # stdio transport by default

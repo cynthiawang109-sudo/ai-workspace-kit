@@ -14,11 +14,11 @@
 url = "https://api.githubcopilot.com/mcp/"
 bearer_token_env_var = "GITHUB_PAT"
 
-# Custom doc-search server built in milestone M2 (see mcp/README.md).
+# Custom doc-search server built in milestone M2 (see mcp/doc-search/).
 # Searches this workspace's documentation repos and local Markdown tickets.
-# Uncomment once M2 lands:
+# Point command at the venv interpreter created during setup, and args at
+# the server script; use absolute paths for your machine.
 #
 # [mcp_servers.doc-search]
-# command = "python"
-# args = ["-m", "doc_search.server"]
-# cwd = "mcp/doc-search"
+# command = 'C:\path\to\ai-workspace-kit\mcp\doc-search\.venv\Scripts\python.exe'
+# args = ['C:\path\to\ai-workspace-kit\mcp\doc-search\server.py']

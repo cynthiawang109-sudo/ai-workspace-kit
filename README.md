@@ -90,7 +90,7 @@ local work.
 
 - **M1** — workspace skeleton: meta-repo, sync scripts, doc repos, demo app ✅
 - **M2** — custom `doc-search` MCP server (Python / FastMCP): keyword search +
-  fetch over the documentation repos and local Markdown tickets
+  fetch over the documentation repos and local Markdown tickets ✅
 - **M3** — code-reviewer on a real pull request (GitHub Actions + Codex review)
 - **M4** — case study: the production pattern this recreates, its trade-offs,
   and what transfers to other teams
