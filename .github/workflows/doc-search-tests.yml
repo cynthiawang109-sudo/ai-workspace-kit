@@ -1,0 +1,28 @@
+name: doc-search tests
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "mcp/doc-search/**"
+      - ".github/workflows/doc-search-tests.yml"
+  pull_request:
+    paths:
+      - "mcp/doc-search/**"
+
+jobs:
+  pytest:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install dependencies
+        run: pip install -r mcp/doc-search/requirements.txt pytest
+      # The unit tests build their own fixture workspace. The stdio smoke
+      # test is not run here: it needs the sibling repos checked out under
+      # projects/, which only the workspace sync provides.
+      - name: Run tests
+        working-directory: mcp/doc-search
+        run: pytest -q

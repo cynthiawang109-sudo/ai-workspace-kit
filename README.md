@@ -1,5 +1,7 @@
 # ai-workspace-kit
 
+[![doc-search tests](https://github.com/cynthiawang109-sudo/ai-workspace-kit/actions/workflows/doc-search-tests.yml/badge.svg)](https://github.com/cynthiawang109-sudo/ai-workspace-kit/actions/workflows/doc-search-tests.yml)
+
 A **tool-agnostic AI development workspace**: a small meta-repo that checks out
 a set of related repositories side by side — living documentation, a code
 reviewer, a process assistant, and demo application code — so an AI coding
