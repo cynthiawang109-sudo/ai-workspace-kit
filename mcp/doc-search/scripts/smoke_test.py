@@ -29,6 +29,14 @@ async def main() -> None:
         for h in hits.data:
             print(f"  {h['score']:>3}  {h['path']}")
 
+        sem = await client.call_tool(
+            "search_docs_semantic",
+            {"query": "how does the service report a down dependency"},
+        )
+        print("search_docs_semantic('how does the service report a down dependency') ->")
+        for h in sem.data:
+            print(f"  {h['score']:>6}  {h['path']}")
+
         tickets = await client.call_tool("list_tickets", {"status": "open"})
         print("list_tickets(status='open') ->", [t["id"] for t in tickets.data])
 

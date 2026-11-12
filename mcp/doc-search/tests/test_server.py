@@ -57,6 +57,31 @@ def test_search_ranks_contract_doc_first(server_mod):
     assert data[0]["path"].endswith("api.md")
 
 
+def test_semantic_search_ranks_topical_doc_first(server_mod):
+    # A natural-language, multi-term query: no single term should need to
+    # dominate for the API doc to beat the unrelated one.
+    data = call(
+        server_mod,
+        "search_docs_semantic",
+        {"query": "which endpoint does every service expose for health checks"},
+    )
+    assert data, "expected at least one hit"
+    assert data[0]["path"].endswith("api.md")
+    assert 0 < data[0]["score"] <= 1  # cosine similarity
+
+
+def test_semantic_search_without_overlap_returns_empty(server_mod):
+    data = call(
+        server_mod, "search_docs_semantic", {"query": "quantum banana hammock"}
+    )
+    assert data == []
+
+
+def test_semantic_search_respects_limit(server_mod):
+    data = call(server_mod, "search_docs_semantic", {"query": "health", "limit": 1})
+    assert len(data) == 1
+
+
 def test_get_doc_roundtrip_and_traversal_guard(server_mod):
     text = call(server_mod, "get_doc", {"path": "projects/demo-docs/api.md"})
     assert "Health checks" in text

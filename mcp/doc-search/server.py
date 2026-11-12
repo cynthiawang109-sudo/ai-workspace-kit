@@ -4,6 +4,8 @@ Tools (all read-only, all local files, no credentials):
 
 - search_docs(query)   keyword search across the documentation repos that
                        sync checked out under projects/
+- search_docs_semantic(query)
+                       TF-IDF vector-space search over the same corpus
 - get_doc(path)        fetch one document by workspace-relative path
 - list_tickets(status) list the demo tickets stored as Markdown in tickets/
 
@@ -12,9 +14,11 @@ otherwise the server assumes it lives at <root>/mcp/doc-search/server.py.
 
 Run (stdio):  python server.py
 """
+import math
 import os
 import re
 import sys
+from collections import Counter
 from pathlib import Path
 
 from fastmcp import FastMCP
@@ -114,6 +118,77 @@ def search_docs(query: str, limit: int = 8) -> list[dict]:
                     "snippet": snippet,
                 }
             )
+    results.sort(key=lambda r: (-r["score"], r["path"]))
+    return results[:limit]
+
+
+def _tokenize(text: str) -> list[str]:
+    return [t for t in re.split(r"\W+", text.lower()) if t]
+
+
+@mcp.tool(annotations=READ_ONLY)
+def search_docs_semantic(query: str, limit: int = 8) -> list[dict]:
+    """Vector-space (TF-IDF, cosine similarity) search over the docs.
+
+    The contrast with search_docs is deliberate. Keyword search counts
+    exact hits with hand-set weights (title x3, heading x2, body x1), so
+    a document that repeats a common term many times can outrank the
+    topically closest one. Here each document is a TF-IDF vector: terms
+    that appear in many documents (low information) are down-weighted by
+    the IDF factor, and ranking is by cosine similarity to the query
+    vector, i.e. overall topical closeness across all query terms.
+
+    It is still a bag-of-words model - no synonym or embedding magic.
+    Pure stdlib; the corpus is re-indexed on every call, which is fine
+    at documentation-repo scale and keeps the server stateless.
+    """
+    query_tokens = _tokenize(query)
+    if not query_tokens:
+        return []
+    docs = []
+    for p in _iter_docs():
+        text = p.read_text(encoding="utf-8", errors="replace")
+        docs.append((p, text, _tokenize(text)))
+    if not docs:
+        return []
+
+    n = len(docs)
+    doc_freq: Counter = Counter()
+    for _, _, tokens in docs:
+        doc_freq.update(set(tokens))
+    idf = {t: math.log((n + 1) / (c + 1)) + 1.0 for t, c in doc_freq.items()}
+
+    def vectorize(tokens: list[str]) -> dict[str, float]:
+        counts = Counter(tokens)
+        total = max(len(tokens), 1)
+        return {t: (c / total) * idf[t] for t, c in counts.items() if t in idf}
+
+    query_vec = vectorize(query_tokens)
+    query_norm = math.sqrt(sum(v * v for v in query_vec.values()))
+    if not query_norm:
+        return []
+
+    results = []
+    for p, text, tokens in docs:
+        doc_vec = vectorize(tokens)
+        dot = sum(query_vec[t] * doc_vec.get(t, 0.0) for t in query_vec)
+        doc_norm = math.sqrt(sum(v * v for v in doc_vec.values()))
+        if not doc_norm or dot <= 0:
+            continue
+        snippet = ""
+        terms = set(query_tokens)
+        for line in text.splitlines():
+            if terms & set(_tokenize(line)):
+                snippet = line.strip()[:200]
+                break
+        results.append(
+            {
+                "path": p.relative_to(ROOT).as_posix(),
+                "title": _doc_title(text, p),
+                "score": round(dot / (query_norm * doc_norm), 4),
+                "snippet": snippet,
+            }
+        )
     results.sort(key=lambda r: (-r["score"], r["path"]))
     return results[:limit]
 

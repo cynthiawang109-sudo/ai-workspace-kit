@@ -10,8 +10,27 @@ Jira/Confluence side of the original production workspace.
 | Tool | What it does |
 |---|---|
 | `search_docs(query, limit=8)` | Keyword search across every Markdown doc under `projects/`; title hits ×3, heading hits ×2, body hits ×1; returns path, title, score, snippet |
+| `search_docs_semantic(query, limit=8)` | TF-IDF vector-space search over the same corpus (cosine similarity); returns path, title, score (0–1), snippet |
 | `get_doc(path)` | Fetch one document by workspace-relative path (only `projects/` and `tickets/` are readable) |
 | `list_tickets(status?)` | List demo tickets from `tickets/*.md` front matter, optionally filtered by status |
+
+## Keyword vs. semantic search
+
+The two search tools are kept side by side on purpose:
+
+- `search_docs` counts exact term hits with hand-set weights. It is
+  predictable and great for known terms ("health", an error code, a
+  ticket id) — but a document that repeats a common term many times can
+  outrank the topically closest one.
+- `search_docs_semantic` treats each document as a TF-IDF vector and
+  ranks by cosine similarity to the query vector. Terms that appear in
+  many documents are down-weighted by the IDF factor, so multi-term,
+  natural-language questions rank by overall topical closeness.
+
+Both are bag-of-words models: neither understands synonyms. The semantic
+tool exists to show the classic vector-space step of the retrieval
+ladder (and where its limits are) with zero dependencies — pure stdlib,
+re-indexed per call, which is fine at documentation-repo scale.
 
 Design points worth noting:
 
