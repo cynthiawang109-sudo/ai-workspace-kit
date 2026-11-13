@@ -1,16 +1,19 @@
 """doc-search — an MCP server for the ai-workspace-kit workspace.
 
-Tools (all local files, no credentials; read-only except the last one):
+Tools (local documents, no credentials; embeddings maintains a derived cache):
 
 - search_docs(query)   keyword search across the documentation repos that
                        sync checked out under projects/
 - search_docs_semantic(query)
                        TF-IDF vector-space search over the same corpus
+- search_docs_embeddings(query)
+                       section embeddings over the same corpus; lazily loaded,
+                       with a derived cache in the server's .index/ directory
 - get_doc(path)        fetch one document by workspace-relative path
 - list_tickets(status) list the demo tickets stored as Markdown in tickets/
 - propose_ticket(title, body)
                        write a ticket DRAFT under tickets/drafts/ — the
-                       server's only write, draft-first by construction:
+                       server's only content write, draft-first by construction:
                        it can never create or modify a real ticket
 
 Workspace root resolution: the AI_WORKSPACE_ROOT environment variable wins;
@@ -62,6 +65,10 @@ ROOT = workspace_root()
 PROJECTS_DIR = ROOT / "projects"
 TICKETS_DIR = ROOT / "tickets"
 
+# These are dependency installs and tool caches, never content directories;
+# adding a name is a deliberate corpus change.
+EXCLUDED_DIR_NAMES = {".git", ".venv", "venv", "node_modules", "__pycache__", ".pytest_cache"}
+
 mcp = FastMCP("doc-search")
 
 
@@ -69,7 +76,7 @@ def _iter_docs():
     if not PROJECTS_DIR.exists():
         return
     for p in sorted(PROJECTS_DIR.rglob("*.md")):
-        if ".git" in p.parts:
+        if EXCLUDED_DIR_NAMES.intersection(p.parts):
             continue
         yield p
 
@@ -81,7 +88,8 @@ def _doc_title(text: str, path: Path) -> str:
     return path.stem
 
 
-# The search/read tools only read local files. Declaring that in the MCP
+# The search/read tools read local documents; embeddings also writes a
+# derived local cache (and may download its model on first use). Declaring that in the MCP
 # annotations matters: clients such as Codex auto-approve read-only
 # tools but stop un-annotated ones for manual approval (and refuse them
 # outright in non-interactive runs).
@@ -200,6 +208,21 @@ def search_docs_semantic(query: str, limit: int = 8) -> list[dict]:
         )
     results.sort(key=lambda r: (-r["score"], r["path"]))
     return results[:limit]
+
+
+@mcp.tool(annotations=READ_ONLY)
+def search_docs_embeddings(query: str, limit: int = 8) -> list[dict]:
+    """Search document sections using locally computed sentence embeddings.
+
+    Returns path, title, cosine score rounded to four places, the first
+    non-empty body line (up to 200 characters) as snippet, and heading trail.
+    Writes only a derived cache in this server's .index/ directory. The
+    optional model downloads on first use, then runs locally. Model imports
+    are deferred until this tool is called, keeping startup torch-free.
+    """
+    import embeddings
+
+    return embeddings.search(query, limit)
 
 
 @mcp.tool(annotations=READ_ONLY)

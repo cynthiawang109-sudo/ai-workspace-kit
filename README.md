@@ -16,6 +16,12 @@ sync that rebuilds the whole workspace anywhere.
 The demo domain is **TaskFlow**, a fictional project-management SaaS. All
 content is original and fictional — no employer code, data, or system names.
 
+![sync.sh materializing the pinned sub-repo versions, doctor.sh verifying them](demo.gif)
+
+*The workspace checking itself: `sync.sh` assembles the sub-repos at the
+exact commits pinned in `versions.txt`, and `doctor.sh` verifies the
+result. Output condensed from a real run.*
+
 ## Start here
 
 New to the workspace? **[WALKTHROUGH.md](WALKTHROUGH.md)** is a guided,
