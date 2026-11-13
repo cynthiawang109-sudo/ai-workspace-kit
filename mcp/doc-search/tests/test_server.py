@@ -25,6 +25,13 @@ def server_mod(tmp_path, monkeypatch):
         encoding="utf-8",
     )
     (docs / "other.md").write_text("# Other\n\nNothing relevant.\n", encoding="utf-8")
+    for relative in (
+        ".git/README.md", ".venv/pkg/README.md", "venv/pkg/README.md",
+        "node_modules/pkg/README.md", "__pycache__/README.md", ".pytest_cache/README.md",
+    ):
+        generated = docs / relative
+        generated.parent.mkdir(parents=True)
+        generated.write_text("# Generated\n\nzqxwv generated junk marker\n", encoding="utf-8")
     tickets = tmp_path / "tickets"
     tickets.mkdir()
     (tickets / "TF-1.md").write_text(
@@ -55,6 +62,13 @@ def test_search_ranks_contract_doc_first(server_mod):
     data = call(server_mod, "search_docs", {"query": "health"})
     assert data, "expected at least one hit"
     assert data[0]["path"].endswith("api.md")
+
+
+@pytest.mark.parametrize("tool", ["search_docs", "search_docs_semantic"])
+def test_search_excludes_generated_directories(server_mod, tool):
+    assert call(server_mod, tool, {"query": "zqxwv generated junk marker", "limit": 100}) == []
+    data = call(server_mod, tool, {"query": "health", "limit": 100})
+    assert [hit["path"] for hit in data] == ["projects/demo-docs/api.md"]
 
 
 def test_semantic_search_ranks_topical_doc_first(server_mod):
