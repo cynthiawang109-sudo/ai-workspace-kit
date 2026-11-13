@@ -21,6 +21,13 @@ def modules(tmp_path, monkeypatch):
         encoding="utf-8",
     )
     (docs / "other.md").write_text("# Other\nNothing relevant.\n", encoding="utf-8")
+    for relative in (
+        ".git/README.md", ".venv/pkg/README.md", "venv/pkg/README.md",
+        "node_modules/pkg/README.md", "__pycache__/README.md", ".pytest_cache/README.md",
+    ):
+        generated = docs / relative
+        generated.parent.mkdir(parents=True)
+        generated.write_text("# Generated\n\nzqxwv generated junk marker\n", encoding="utf-8")
     monkeypatch.setenv("AI_WORKSPACE_ROOT", str(tmp_path))
     monkeypatch.setenv("DOC_SEARCH_EMBEDDER", "fake")
     import server
@@ -42,6 +49,19 @@ def test_chunk_heading_trails(modules):
     ]
     assert chunks[0]["text"] == "Preamble."
     assert chunks[2]["text"] == "Every service exposes a health endpoint."
+
+
+def test_search_excludes_generated_directories(modules):
+    server, embeddings = modules
+    allowed = {"projects/demo-docs/api.md", "projects/demo-docs/other.md"}
+    # Hashed fake embeddings can match unrelated tokens, so inspect paths
+    # rather than requiring the marker query to return no results.
+    for query in ("zqxwv generated junk marker", "health endpoint service"):
+        data = call(server, "search_docs_embeddings", {"query": query, "limit": 100})
+        assert all(hit["path"] in allowed for hit in data)
+        if query == "health endpoint service":
+            assert data[0]["path"] == "projects/demo-docs/api.md"
+    assert {chunk["path"] for chunk in embeddings.load_index()} == allowed
 
 
 def test_search_ranking_and_shape(modules):
