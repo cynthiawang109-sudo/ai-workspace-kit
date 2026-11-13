@@ -49,8 +49,8 @@ Ask Codex:
 The tool can only write under `tickets/drafts/` with status `draft` —
 it *cannot* create a real ticket, and your client will ask before
 running it because it is annotated as a write. Review the file it
-created. Promoting a draft is a human step: move it into `tickets/`,
-give it the next TF id, and set its status to `open`.
+created. A human can promote the draft with `scripts/promote-draft.ps1`
+(or `.sh`) to file it as an Issue on the board (with the Project configured).
 
 ## 4. Turn a ticket into a reviewed pull request
 
