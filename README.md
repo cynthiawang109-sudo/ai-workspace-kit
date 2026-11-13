@@ -24,6 +24,17 @@ draft a ticket, get a pull request reviewed, run the digest demo, and
 re-check a release gate — each step says what to type and what you
 should see.
 
+## Published documentation
+
+The two documentation repos are also published as GitBook sites,
+kept in sync with GitHub both ways (the repos stay the source of
+truth):
+
+- **TaskFlow Docs** — https://taskflow-1.gitbook.io/taskflow-docs/
+  (system overview, deployment, incident runbook)
+- **TaskFlow API Docs** — https://taskflow-1.gitbook.io/taskflow-docs-1/
+  (API conventions, data model)
+
 ## Architecture
 
 ```mermaid

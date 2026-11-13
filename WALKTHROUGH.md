@@ -103,6 +103,17 @@ were fixed, and the re-check passed:
 and its [release ticket](https://github.com/cynthiawang109-sudo/demo-app/issues/7)
 are the public record of that loop.
 
+## The docs, published
+
+The same documentation is published on GitBook, synced two ways
+with the two docs repos:
+
+- TaskFlow Docs — https://taskflow-1.gitbook.io/taskflow-docs/
+- TaskFlow API Docs — https://taskflow-1.gitbook.io/taskflow-docs-1/
+
+Edit a page in either docs repo, push, and the site republishes;
+the repos remain the source of truth.
+
 ## Troubleshooting
 
 - **`doctor` flags the demo-app checkout's branch** — it expects
