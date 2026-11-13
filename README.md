@@ -16,6 +16,14 @@ sync that rebuilds the whole workspace anywhere.
 The demo domain is **TaskFlow**, a fictional project-management SaaS. All
 content is original and fictional — no employer code, data, or system names.
 
+## Start here
+
+New to the workspace? **[WALKTHROUGH.md](WALKTHROUGH.md)** is a guided,
+copy-paste tour: sync the workspace, ask it questions across repos,
+draft a ticket, get a pull request reviewed, run the digest demo, and
+re-check a release gate — each step says what to type and what you
+should see.
+
 ## Architecture
 
 ```mermaid
