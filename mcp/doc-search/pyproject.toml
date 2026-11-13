@@ -3,7 +3,7 @@ name = "doc-search"
 version = "0.1.0"
 description = "MCP server for keyword search over the ai-workspace-kit documentation repos and demo tickets"
 requires-python = ">=3.10"
-dependencies = ["fastmcp>=2.0"]
+dependencies = ["fastmcp>=4.1.7"]
 
 [project.optional-dependencies]
 dev = ["pytest>=9.2.0"]
