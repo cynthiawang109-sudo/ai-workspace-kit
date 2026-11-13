@@ -1,0 +1,2 @@
+# Optional: only needed for search_docs_embeddings; pulls in torch.
+sentence-transformers>=3,<6
