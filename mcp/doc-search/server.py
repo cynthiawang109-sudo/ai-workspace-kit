@@ -65,6 +65,10 @@ ROOT = workspace_root()
 PROJECTS_DIR = ROOT / "projects"
 TICKETS_DIR = ROOT / "tickets"
 
+# These are dependency installs and tool caches, never content directories;
+# adding a name is a deliberate corpus change.
+EXCLUDED_DIR_NAMES = {".git", ".venv", "venv", "node_modules", "__pycache__", ".pytest_cache"}
+
 mcp = FastMCP("doc-search")
 
 
@@ -72,7 +76,7 @@ def _iter_docs():
     if not PROJECTS_DIR.exists():
         return
     for p in sorted(PROJECTS_DIR.rglob("*.md")):
-        if ".git" in p.parts:
+        if EXCLUDED_DIR_NAMES.intersection(p.parts):
             continue
         yield p
 
