@@ -6,3 +6,4 @@ projects/*
 *.local.*
 .venv/
 __pycache__/
+mcp/doc-search/.index/

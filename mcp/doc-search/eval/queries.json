@@ -1,0 +1,14 @@
+[
+  {"query": "health checks 503 degraded", "expect": ["projects/taskflow-api-docs/api-conventions.md"], "kind": "exact"},
+  {"query": "cursor pagination next_cursor", "expect": ["projects/taskflow-api-docs/api-conventions.md"], "kind": "exact"},
+  {"query": "comments supersedes_id append-only", "expect": ["projects/taskflow-api-docs/data-model.md"], "kind": "exact"},
+  {"query": "deployment rollback container tag", "expect": ["projects/taskflow-docs/deployment.md"], "kind": "exact"},
+  {"query": "worker queue poison job", "expect": ["projects/taskflow-docs/incident-runbook.md"], "kind": "exact"},
+  {"query": "redis pub/sub board presence", "expect": ["projects/taskflow-docs/system-overview.md"], "kind": "exact"},
+  {"query": "How do we undo a broken rollout?", "expect": ["projects/taskflow-docs/deployment.md"], "kind": "paraphrase"},
+  {"query": "Where does repeatedly unsuccessful background work end up?", "expect": ["projects/taskflow-docs/system-overview.md", "projects/taskflow-docs/incident-runbook.md"], "kind": "paraphrase"},
+  {"query": "How can a caller tell whether a process is ready to accept requests?", "expect": ["projects/taskflow-api-docs/api-conventions.md"], "kind": "paraphrase"},
+  {"query": "Are earlier versions of a discussion entry preserved after correction?", "expect": ["projects/taskflow-api-docs/data-model.md"], "kind": "synonym"},
+  {"query": "Who authorizes pushing a build live?", "expect": ["projects/taskflow-docs/deployment.md"], "kind": "paraphrase"},
+  {"query": "What should responders do if private contact information escapes into diagnostics?", "expect": ["projects/taskflow-docs/incident-runbook.md"], "kind": "synonym"}
+]
