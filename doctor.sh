@@ -48,6 +48,8 @@ done
 
 # 3. doc-search virtual environment.
 VENV_PY="$ROOT/mcp/doc-search/.venv/bin/python"
+# Windows venvs use Scripts/python.exe instead of bin/python.
+[ -x "$VENV_PY" ] || VENV_PY="$ROOT/mcp/doc-search/.venv/Scripts/python.exe"
 if [ ! -x "$VENV_PY" ]; then
   report fail "doc-search venv" "missing - see mcp/doc-search/README.md setup"
 else
