@@ -16,8 +16,10 @@ It applies at the workspace root; individual projects may add their own
 ## Workspace checkouts
 
 Run `./sync.sh` or `.\sync.ps1` first if `projects/` is empty or stale.
-Checkouts track the latest default branch. Do not commit inside a checkout
-without pushing to that project's own repository.
+Checkouts materialize the versions pinned in `versions.txt`. Do not commit
+inside a checkout without pushing to that project's own repository.
+
+After merging sub-repo work, bump the pins and commit `versions.txt`.
 
 | Directory | Role |
 |---|---|

@@ -1,8 +1,8 @@
 # doctor.ps1 - one-command health check for this workspace.
 #
 # Verifies the pieces the kit needs to be fully operational on this
-# machine: workspace layout, sub-repo git state, the doc-search virtual
-# environment, Codex MCP registration, and the presence (never the
+# machine: workspace layout, sub-repo git state, pinned versions, the doc-search
+# virtual environment, Codex MCP registration, and the presence (never the
 # value) of the GitHub token. Exits non-zero if any hard check fails.
 #
 # Usage:  .\doctor.ps1        (from the workspace root)
@@ -34,20 +34,60 @@ foreach ($name in $repos) {
     }
 }
 
+$pins = @{}
+$versions = Join-Path $root 'versions.txt'
+if (Test-Path $versions) {
+    foreach ($line in Get-Content $versions) {
+        if ($line -match '^([^#\s]+)\s+([0-9a-fA-F]{40})\s*$') { $pins[$Matches[1]] = $Matches[2] }
+    }
+}
+
 # 2. Git state of each checkout: default branch, clean tree.
 foreach ($name in $repos) {
     $path = Join-Path $root "projects\$name"
     if (-not (Test-Path $path)) { continue }
     $branch = git -C $path rev-parse --abbrev-ref HEAD 2>$null
     $dirty = @(git -C $path status --porcelain 2>$null).Count
-    if ($branch -ne 'main') {
-        Report 'warn' "git/$name" "on branch '$branch', expected 'main'"
-    } elseif ($dirty -gt 0) {
+    $head = git -C $path rev-parse HEAD 2>$null
+    if ($dirty -gt 0) {
         Report 'warn' "git/$name" "$dirty uncommitted change(s)"
+    } elseif ($branch -eq 'HEAD' -and $head -eq $pins[$name]) {
+        Report 'ok' "git/$name" 'detached at pin'
+    } elseif ($branch -ne 'main') {
+        Report 'warn' "git/$name" "on branch '$branch', expected 'main'"
     } else {
         Report 'ok' "git/$name" 'main, clean'
     }
 }
+
+# Pinned versions.
+Write-Output ""
+Write-Output 'Pinned versions'
+if (-not (Test-Path $versions)) {
+    Report 'fail' 'pinned versions' 'versions.txt missing - restore the manifest'
+}
+foreach ($name in $repos) {
+    $pin = $pins[$name]
+    if (-not $pin) {
+        Report 'fail' "pin/$name" 'missing or invalid pin in versions.txt'
+        continue
+    }
+    $path = Join-Path $root "projects/$name"
+    $head = git -C $path rev-parse HEAD 2>$null
+    if ($LASTEXITCODE -ne 0) {
+        Report 'fail' "pin/$name" 'checkout unavailable - run ./sync.sh'
+        continue
+    }
+    $branch = git -C $path rev-parse --abbrev-ref HEAD
+    if ($head -eq $pin) {
+        Report 'ok' "pin/$name" "at pin $($pin.Substring(0, 7))"
+    } elseif ($branch -ne 'main' -and $branch -ne 'HEAD') {
+        Report 'warn' "pin/$name" "HEAD $($head.Substring(0, 7)), pin $($pin.Substring(0, 7)) on feature branch '$branch'"
+    } else {
+        Report 'fail' "pin/$name" "HEAD $($head.Substring(0, 7)), pin $($pin.Substring(0, 7)) - run ./sync.sh"
+    }
+}
+Write-Output ""
 
 # 3. Python + doc-search virtual environment.
 $venvPy = Join-Path $root 'mcp\doc-search\.venv\Scripts\python.exe'

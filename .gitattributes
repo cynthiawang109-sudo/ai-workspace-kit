@@ -1,0 +1,4 @@
+# Bash must remain executable by Git Bash after a Windows checkout.
+*.sh text eol=lf
+# Keep the reproducibility manifest byte-stable across platforms.
+versions.txt text eol=lf

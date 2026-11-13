@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # doctor.sh - one-command health check for this workspace (bash twin of
-# doctor.ps1). Verifies layout, sub-repo git state, the doc-search
+# doctor.ps1). Verifies layout, sub-repo git state, pinned versions, the doc-search
 # virtual environment, Codex MCP registration, and the presence (never
 # the value) of the GitHub token. Exits non-zero on any failed check.
 #
@@ -31,20 +31,57 @@ for name in $REPOS; do
   fi
 done
 
+pin_for() {
+  [ -f "$ROOT/versions.txt" ] || return
+  awk -v name="$1" '$1 == name {sub(/\r$/, "", $2); print $2; exit}' "$ROOT/versions.txt"
+}
+
 # 2. Git state of each checkout.
 for name in $REPOS; do
   path="$ROOT/projects/$name"
   [ -d "$path" ] || continue
   branch=$(git -C "$path" rev-parse --abbrev-ref HEAD 2>/dev/null)
   dirty=$(git -C "$path" status --porcelain 2>/dev/null | wc -l | tr -d ' ')
-  if [ "$branch" != "main" ]; then
-    report warn "git/$name" "on branch '$branch', expected 'main'"
-  elif [ "$dirty" -gt 0 ]; then
+  head=$(git -C "$path" rev-parse HEAD 2>/dev/null)
+  pin=$(pin_for "$name")
+  if [ "$dirty" -gt 0 ]; then
     report warn "git/$name" "$dirty uncommitted change(s)"
+  elif [ "$branch" = HEAD ] && [ "$head" = "$pin" ]; then
+    report ok "git/$name" "detached at pin"
+  elif [ "$branch" != "main" ]; then
+    report warn "git/$name" "on branch '$branch', expected 'main'"
   else
     report ok "git/$name" "main, clean"
   fi
 done
+
+# Pinned versions.
+echo
+echo "Pinned versions"
+if [ ! -f "$ROOT/versions.txt" ]; then
+  report fail "pinned versions" "versions.txt missing - restore the manifest"
+fi
+for name in $REPOS; do
+  pin=$(pin_for "$name")
+  if [[ ! "$pin" =~ ^[0-9a-fA-F]{40}$ ]]; then
+    report fail "pin/$name" "missing or invalid pin in versions.txt"
+    continue
+  fi
+  path="$ROOT/projects/$name"
+  if ! head=$(git -C "$path" rev-parse HEAD 2>/dev/null); then
+    report fail "pin/$name" "checkout unavailable - run ./sync.sh"
+    continue
+  fi
+  branch=$(git -C "$path" rev-parse --abbrev-ref HEAD)
+  if [ "$head" = "$pin" ]; then
+    report ok "pin/$name" "at pin ${pin:0:7}"
+  elif [ "$branch" != main ] && [ "$branch" != HEAD ]; then
+    report warn "pin/$name" "HEAD ${head:0:7}, pin ${pin:0:7} on feature branch '$branch'"
+  else
+    report fail "pin/$name" "HEAD ${head:0:7}, pin ${pin:0:7} - run ./sync.sh"
+  fi
+done
+echo
 
 # 3. doc-search virtual environment.
 VENV_PY="$ROOT/mcp/doc-search/.venv/bin/python"

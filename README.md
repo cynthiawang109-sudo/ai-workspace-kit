@@ -56,8 +56,9 @@ flowchart TB
 
 | Path | What it is |
 |---|---|
-| `sync.ps1` / `sync.sh` | Clone or fast-forward-update every repo in `repos.txt` into `projects/` |
-| `doctor.ps1` / `doctor.sh` | One-command health check: layout, sub-repo git state, doc-search venv, Codex MCP registration, token presence |
+| `sync.ps1` / `sync.sh` | Materialize the pinned versions of every repo in `repos.txt` into `projects/` |
+| `doctor.ps1` / `doctor.sh` | One-command health check: layout, sub-repo git state and pins, doc-search venv, Codex MCP registration, token presence |
+| `versions.txt` | Main-branch SHAs of the last verified sub-repo combination |
 | `repos.txt` | The workspace manifest: one `name url` pair per line |
 | `AGENTS.md` | Workspace conventions every agent session follows (read order, cross-repo references, write governance) |
 | `CLAUDE.md` | Thin pointer to `AGENTS.md` so Claude clients land in the same place |
@@ -89,15 +90,28 @@ Claude Code works too) and ask something that needs more than one repo, e.g.
 implementation follow it?"* — the answer lives in `taskflow-api-docs`, the code
 in `demo-app`.
 
-Re-run the sync script any time: it is idempotent, clones what is missing, and
-fast-forward-pulls what exists. A `pull --ff-only` failure means that checkout
-has local commits — the script reports it and moves on rather than clobbering
-local work.
-
 Run `.\doctor.ps1` (or `./doctor.sh`) any time to check whether this machine's
 setup is complete: it verifies the layout, each checkout's git state, the
 doc-search virtual environment, Codex's MCP registrations, and that the
 GitHub token variable is set (presence only — it never prints secrets).
+
+## Reproducible sync
+
+`versions.txt` pins the main-branch SHAs of the last verified combination,
+in `repos.txt` order. demo-app release tags live in demo-app and are independent
+of these workspace pins.
+
+Run `./sync.sh` or `.\sync.ps1` to clone missing repos and move clean checkouts
+to their pins. Pins at the remote main tip stay attached to `main`; older pins
+use detached HEAD. Dirty checkouts are warned about and skipped without being
+touched. Every repo must have a pin. Doctor verifies each checkout against it.
+
+After merging sub-repo work, run `./sync.sh --update-pins` or
+`.\sync.ps1 -UpdatePins` to fetch `origin/main` and print and record changed
+pins without moving checkouts. Both modes support the substring filter
+(`./sync.sh docs --update-pins` or `.\sync.ps1 -Only docs -UpdatePins`).
+Run sync to materialize the new pins, verify the combination, then commit
+`versions.txt` so other machines reproduce it.
 
 ## Design notes
 
