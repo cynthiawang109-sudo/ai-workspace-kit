@@ -94,3 +94,53 @@ def test_list_tickets_and_status_filter(server_mod):
     assert {t["id"] for t in all_tickets} == {"TF-1", "TF-2"}
     open_only = call(server_mod, "list_tickets", {"status": "open"})
     assert [t["id"] for t in open_only] == ["TF-1"]
+
+
+def test_propose_ticket_writes_a_draft_only(server_mod, tmp_path):
+    data = call(
+        server_mod,
+        "propose_ticket",
+        {"title": "Speed up board page", "body": "It feels slow.",
+         "priority": "high"},
+    )
+    assert data["status"] == "draft"
+    assert data["path"] == "tickets/drafts/draft-speed-up-board-page.md"
+    draft = tmp_path / "tickets" / "drafts" / "draft-speed-up-board-page.md"
+    text = draft.read_text(encoding="utf-8")
+    assert "status: draft" in text
+    assert "title: Speed up board page" in text
+    assert "It feels slow." in text
+    # The draft is not a ticket: list_tickets must not see it.
+    tickets = call(server_mod, "list_tickets", {})
+    assert {t["id"] for t in tickets} == {"TF-1", "TF-2"}
+
+
+def test_propose_ticket_refuses_to_overwrite(server_mod):
+    args = {"title": "Duplicate me", "body": "first"}
+    call(server_mod, "propose_ticket", args)
+    with pytest.raises(Exception):
+        call(server_mod, "propose_ticket", args)
+
+
+def test_propose_ticket_title_cannot_escape_the_drafts_dir(server_mod, tmp_path):
+    data = call(
+        server_mod,
+        "propose_ticket",
+        {"title": "../../evil\n---\nstatus: done", "body": "x"},
+    )
+    path = tmp_path / data["path"]
+    assert path.exists()
+    assert path.parent == tmp_path / "tickets" / "drafts"
+    # The injected newline and front matter did not take effect: the
+    # parsed status of the written file is draft, not done.
+    assert server_mod._parse_ticket(path)["status"] == "draft"
+    assert server_mod._parse_ticket(path)["id"].startswith("draft-")
+
+
+def test_propose_ticket_rejects_unknown_priority(server_mod):
+    with pytest.raises(Exception):
+        call(
+            server_mod,
+            "propose_ticket",
+            {"title": "Nope", "body": "x", "priority": "urgent"},
+        )

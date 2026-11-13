@@ -1,6 +1,6 @@
 """doc-search — an MCP server for the ai-workspace-kit workspace.
 
-Tools (all read-only, all local files, no credentials):
+Tools (all local files, no credentials; read-only except the last one):
 
 - search_docs(query)   keyword search across the documentation repos that
                        sync checked out under projects/
@@ -8,6 +8,10 @@ Tools (all read-only, all local files, no credentials):
                        TF-IDF vector-space search over the same corpus
 - get_doc(path)        fetch one document by workspace-relative path
 - list_tickets(status) list the demo tickets stored as Markdown in tickets/
+- propose_ticket(title, body)
+                       write a ticket DRAFT under tickets/drafts/ — the
+                       server's only write, draft-first by construction:
+                       it can never create or modify a real ticket
 
 Workspace root resolution: the AI_WORKSPACE_ROOT environment variable wins;
 otherwise the server assumes it lives at <root>/mcp/doc-search/server.py.
@@ -77,11 +81,16 @@ def _doc_title(text: str, path: Path) -> str:
     return path.stem
 
 
-# Every tool here only reads local files. Declaring that in the MCP
+# The search/read tools only read local files. Declaring that in the MCP
 # annotations matters: clients such as Codex auto-approve read-only
 # tools but stop un-annotated ones for manual approval (and refuse them
 # outright in non-interactive runs).
 READ_ONLY = {"readOnlyHint": True, "destructiveHint": False, "openWorldHint": False}
+
+# The one write tool (propose_ticket) is annotated honestly as a write:
+# clients will ask the user before running it, which is exactly the
+# human-in-the-loop point of draft-first.
+DRAFT_WRITE = {"readOnlyHint": False, "destructiveHint": False, "openWorldHint": False}
 
 
 @mcp.tool(annotations=READ_ONLY)
@@ -242,6 +251,53 @@ def list_tickets(status: str | None = None) -> list[dict]:
                 continue
             out.append(t)
     return out
+
+
+@mcp.tool(annotations=DRAFT_WRITE)
+def propose_ticket(title: str, body: str, priority: str = "medium") -> dict:
+    """Propose a new ticket as a DRAFT under tickets/drafts/.
+
+    Draft-first is enforced here, not left to convention: this is the
+    server's only write tool, and it can only create a new file in
+    tickets/drafts/ with status "draft". It cannot create, modify, or
+    delete real tickets in tickets/. A human reviews the draft and
+    promotes it — moves it into tickets/ with a real TF id — if it
+    should become a ticket. Returns the draft's workspace-relative
+    path.
+    """
+    # One line, and no "---": the ticket parser splits front matter on
+    # that marker, so a title containing it would corrupt the draft.
+    clean_title = " ".join(title.split()).replace("---", "-")
+    slug = re.sub(r"[^a-z0-9]+", "-", clean_title.lower()).strip("-")[:60]
+    slug = slug.strip("-") or "untitled"
+    if priority not in ("low", "medium", "high"):
+        raise ValueError("priority must be low, medium or high")
+    drafts_dir = TICKETS_DIR / "drafts"
+    drafts_dir.mkdir(parents=True, exist_ok=True)
+    path = drafts_dir / f"draft-{slug}.md"
+    if path.exists():
+        raise ValueError(
+            f"a draft already exists at tickets/drafts/{path.name};"
+            " choose a different title"
+        )
+    text = (
+        "---\n"
+        f"id: draft-{slug}\n"
+        f"title: {clean_title}\n"
+        "status: draft\n"
+        f"priority: {priority}\n"
+        "---\n\n"
+        f"{body.strip()}\n"
+    )
+    path.write_text(text, encoding="utf-8")
+    return {
+        "path": path.relative_to(ROOT).as_posix(),
+        "status": "draft",
+        "note": (
+            "Draft only: a human must review it and move it into"
+            " tickets/ with a real TF id for it to become a ticket."
+        ),
+    }
 
 
 if __name__ == "__main__":

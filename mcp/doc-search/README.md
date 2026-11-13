@@ -1,9 +1,10 @@
 # doc-search MCP server
 
-A small, read-only [MCP](https://modelcontextprotocol.io) server written with
-FastMCP. It gives an AI coding agent structured access to this workspace's
+A small [MCP](https://modelcontextprotocol.io) server written with FastMCP.
+It gives an AI coding agent structured access to this workspace's
 documentation and demo tickets — the local, public stand-in for the
-Jira/Confluence side of the original production workspace.
+Jira/Confluence side of the original production workspace. Four tools are
+read-only; the fifth can only write ticket *drafts* (see below).
 
 ## Tools
 
@@ -13,6 +14,18 @@ Jira/Confluence side of the original production workspace.
 | `search_docs_semantic(query, limit=8)` | TF-IDF vector-space search over the same corpus (cosine similarity); returns path, title, score (0–1), snippet |
 | `get_doc(path)` | Fetch one document by workspace-relative path (only `projects/` and `tickets/` are readable) |
 | `list_tickets(status?)` | List demo tickets from `tickets/*.md` front matter, optionally filtered by status |
+| `propose_ticket(title, body, priority="medium")` | Write a ticket **draft** to `tickets/drafts/draft-<slug>.md` — the server's only write; it cannot create or modify real tickets |
+
+## Draft-first writes
+
+`propose_ticket` mirrors the production workspace's rule for outward
+writes (there: Jira changes start as drafts a human approves). The
+boundary is enforced by the tool, not by politeness: it writes only
+new files under `tickets/drafts/`, always with `status: draft`, it
+refuses to overwrite an existing draft, and it is annotated as a
+write, so clients ask the user before calling it. Promoting a draft
+into `tickets/` with a real TF id is a deliberate human step, and
+`list_tickets` never shows drafts as tickets.
 
 ## Keyword vs. semantic search
 
