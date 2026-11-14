@@ -7,13 +7,6 @@
 #   claude mcp add --transport http github https://api.githubcopilot.com/mcp/
 #   claude mcp add doc-search -- python -m doc_search.server
 
-# GitHub's official MCP server (hosted remote endpoint — no Docker needed).
-# Auth: set GITHUB_PAT in your environment (fine-grained, least privilege),
-# or use `codex mcp login github` if your client build supports OAuth.
-[mcp_servers.github]
-url = "https://api.githubcopilot.com/mcp/"
-bearer_token_env_var = "GITHUB_PAT"
-
 # Custom doc-search server built in milestone M2 (see mcp/doc-search/).
 # Searches this workspace's documentation repos and local Markdown tickets.
 # Point command at the venv interpreter created during setup, and args at
@@ -32,3 +25,35 @@ bearer_token_env_var = "GITHUB_PAT"
 # [mcp_servers.doc-search.env]
 # PYTHONUTF8 = "1"
 # PYTHONIOENCODING = "utf-8"
+
+# GitHub's official remote MCP server (no Docker needed).
+# Set a fine-grained GITHUB_PAT user environment variable scoped to the
+# workspace repos; never put the token in this file.
+#
+# [mcp_servers.github]
+# url = "https://api.githubcopilot.com/mcp/"
+# bearer_token_env_var = "GITHUB_PAT"
+
+# Atlassian's official remote MCP server for Jira and Confluence.
+# After adding this block, run `codex mcp login atlassian` and approve in
+# the browser (OAuth; no token in this file).
+# The older /v1/mcp endpoint is deprecated and is removed on 2027-03-01;
+# use /v2/mcp.
+#
+# [mcp_servers.atlassian]
+# url = "https://mcp.atlassian.com/v2/mcp"
+
+# GitLab via zereight gitlab-mcp in Docker, the same server the original
+# Entmoot used. Docker Desktop must be running.
+# Pull zereight050/gitlab-mcp:latest first in your own terminal:
+#   docker pull zereight050/gitlab-mcp:latest
+# Docker's credential helper may fail in non-interactive sessions.
+# Store a least-privilege read-only PAT in the GITLAB_PERSONAL_ACCESS_TOKEN
+# user environment variable; never put the token in this file.
+# GITLAB_READ_ONLY_MODE keeps the server read-only. Point GITLAB_API_URL
+# at a self-hosted instance if needed.
+#
+# [mcp_servers.gitlab]
+# command = "docker"
+# args = ["run", "--rm", "-i", "-e", "GITLAB_PERSONAL_ACCESS_TOKEN", "-e", "GITLAB_API_URL=https://gitlab.com/api/v4", "-e", "GITLAB_READ_ONLY_MODE=true", "zereight050/gitlab-mcp:latest"]
+# env_vars = ["GITLAB_PERSONAL_ACCESS_TOKEN"]
