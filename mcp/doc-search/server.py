@@ -10,11 +10,12 @@ Tools (local documents, no credentials; embeddings maintains a derived cache):
                        section embeddings over the same corpus; lazily loaded,
                        with a derived cache in the server's .index/ directory
 - get_doc(path)        fetch one document by workspace-relative path
-- list_tickets(status) list the demo tickets stored as Markdown in tickets/
+- list_tickets(status) list the pre-TF-115 Markdown archive in tickets/
 - propose_ticket(title, body)
                        write a ticket DRAFT under tickets/drafts/ — the
                        server's only content write, draft-first by construction:
-                       it can never create or modify a real ticket
+                       it can never create or modify a real ticket; a human
+                       files an Issue via scripts/promote-draft
 
 Workspace root resolution: the AI_WORKSPACE_ROOT environment variable wins;
 otherwise the server assumes it lives at <root>/mcp/doc-search/server.py.
@@ -263,8 +264,9 @@ def _parse_ticket(p: Path) -> dict:
 
 @mcp.tool(annotations=READ_ONLY)
 def list_tickets(status: str | None = None) -> list[dict]:
-    """List the demo tickets (Markdown files in tickets/, standing in for an
-    issue tracker). Optionally filter by status: open, in-progress, done.
+    """List the pre-TF-115 archive (Markdown files in tickets/).
+    Optionally filter by status: open, in-progress, done. New work lives
+    in GitHub Issues; humans promote drafts via scripts/promote-draft.
     """
     out = []
     if TICKETS_DIR.exists():
@@ -283,9 +285,9 @@ def propose_ticket(title: str, body: str, priority: str = "medium") -> dict:
     Draft-first is enforced here, not left to convention: this is the
     server's only write tool, and it can only create a new file in
     tickets/drafts/ with status "draft". It cannot create, modify, or
-    delete real tickets in tickets/. A human reviews the draft and
-    promotes it — moves it into tickets/ with a real TF id — if it
-    should become a ticket. Returns the draft's workspace-relative
+    delete the pre-TF-115 archive in tickets/. A human reviews the draft
+    and files an Issue via scripts/promote-draft if it should become
+    a ticket. The server stays credential-free. Returns the workspace-relative
     path.
     """
     # One line, and no "---": the ticket parser splits front matter on
@@ -317,8 +319,8 @@ def propose_ticket(title: str, body: str, priority: str = "medium") -> dict:
         "path": path.relative_to(ROOT).as_posix(),
         "status": "draft",
         "note": (
-            "Draft only: a human must review it and move it into"
-            " tickets/ with a real TF id for it to become a ticket."
+            "Draft only: a human must review it and file an Issue via"
+            " scripts/promote-draft; tickets/ is the pre-TF-115 archive."
         ),
     }
 

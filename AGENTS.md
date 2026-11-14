@@ -37,6 +37,14 @@ After merging sub-repo work, bump the pins and commit `versions.txt`.
   it for X" rather than hard-requiring the workspace. Every project must stay
   usable standalone.
 
+## Ticket system
+
+- New work items start as GitHub Issues on the workspace Project board.
+- `tickets/*.md` is the pre-TF-115 archive: read-only history.
+- Agent-proposed work still starts as a local draft via doc-search
+  `propose_ticket`; a human promotes it with `scripts/promote-draft.ps1`
+  (or `.sh`), with the Project configured to add the Issue to the board.
+
 ## Write governance (draft-first)
 
 - Reading is free. **Writing outward is not**: any issue, PR comment, review,

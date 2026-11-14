@@ -14,7 +14,7 @@ annotated read-only (embeddings maintains a derived local cache); the sixth can 
 | `search_docs_semantic(query, limit=8)` | TF-IDF vector-space search over the same corpus (cosine similarity); returns path, title, score (0–1), snippet |
 | `search_docs_embeddings(query, limit=8)` | Sentence embeddings over heading chunks; returns path, title, cosine score, snippet, heading; caches in `.index/` |
 | `get_doc(path)` | Fetch one document by workspace-relative path (only `projects/` and `tickets/` are readable) |
-| `list_tickets(status?)` | List demo tickets from `tickets/*.md` front matter, optionally filtered by status |
+| `list_tickets(status?)` | List the pre-TF-115 archive from `tickets/*.md` front matter, optionally filtered by status |
 | `propose_ticket(title, body, priority="medium")` | Write a ticket **draft** to `tickets/drafts/draft-<slug>.md` — the server's only source-content write; it cannot create or modify real tickets |
 
 ## Draft-first writes
@@ -24,9 +24,14 @@ writes (there: Jira changes start as drafts a human approves). The
 boundary is enforced by the tool, not by politeness: it writes only
 new files under `tickets/drafts/`, always with `status: draft`, it
 refuses to overwrite an existing draft, and it is annotated as a
-write, so clients ask the user before calling it. Promoting a draft
-into `tickets/` with a real TF id is a deliberate human step, and
-`list_tickets` never shows drafts as tickets.
+write, so clients ask the user before calling it. `tickets/` is the pre-TF-115
+archive; `list_tickets` never shows drafts as tickets. A human reviews and
+promotes a draft with `scripts/promote-draft.ps1` (or `.sh`), which files
+an Issue instead of moving the file into `tickets/`. Set `AI_WORKSPACE_PROJECT`
+to the workspace Project number, or pass `-Project N` / `--project N`, to
+also add the Issue to the board. Without a Project, the script prints the
+Issue URL and notes that it was not added to a board. The draft is preserved.
+The doc-search server stays credential-free and never calls GitHub.
 
 ## Three rungs of document search
 
