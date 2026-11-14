@@ -3,6 +3,6 @@
 # demo-app releases are tagged in demo-app itself, orthogonal to these pins.
 taskflow-docs 4f750d6fef8ead7b95b74740f60e20b5c84b8bbf
 taskflow-api-docs 224243c8a6d13fa5e0f1dd6cb8b309fd2b1eb82f
-code-reviewer 9a52204d4bedc1ccc7f77efbdc8d56c15874c8c4
+code-reviewer 6f0726b72c89c40adf917c4c53be0b060c5fbd96
 release-assistant 33959e17b6a0b4f7eaa80f6af8e8967b585648a2
-demo-app 44741612ac456d04a82155a79e80b1109c4d5810
+demo-app 594466db22055331bdc96e2f7475a6bcfebc411a
