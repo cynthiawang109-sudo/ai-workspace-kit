@@ -1,9 +1,9 @@
 # Workspace pins: <name> <full-sha>, in repos.txt order.
 # Pins are main-branch SHAs of the last verified combination.
 # demo-app releases are tagged in demo-app itself, orthogonal to these pins.
-taskflow-docs b7164c019c25dd9f743fc151b05f2c4312eff056
-taskflow-api-docs c18510eaa1650454f8c09817f69dc903dfdf310f
-code-reviewer 95069387ac24597a714262a2830e94e4ee4bb405
-release-assistant 33959e17b6a0b4f7eaa80f6af8e8967b585648a2
-demo-app bf8242fdb980c6e89ea98d507dfeebdcecf7c447
+taskflow-docs 7a9566e144d4a4392aa5556ec67d3bf2ae5d2ad1
+taskflow-api-docs 9f01db42f2bb374bf44fd11a9cf6149e2571dde0
+code-reviewer 43a2cc0b9c5eaa07a717606cc1580ba0208dbf40
+release-assistant b14508a10dd4fce163cef63934ffd1ac6f6a4057
+demo-app 5712f50fc4ce11eeadf4fc569d208c77ad1992a3
 taskflow-web e2b8611f6e7135f0acdf151effe43db7b3f34126
