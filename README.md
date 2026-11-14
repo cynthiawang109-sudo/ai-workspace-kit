@@ -81,6 +81,7 @@ Synced projects:
 | `projects/code-reviewer/` | Review standards, per-project review notes, documentation index |
 | `projects/release-assistant/` | Release checklists and change-process documentation |
 | `projects/demo-app/` | Demo FastAPI service the other repos describe and review |
+| `projects/taskflow-web/` | TaskFlow web frontend (Next.js/TypeScript) consuming the demo API |
 
 ## Quick start
 
