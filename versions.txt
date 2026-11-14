@@ -6,3 +6,4 @@ taskflow-api-docs c18510eaa1650454f8c09817f69dc903dfdf310f
 code-reviewer 0c2854360cf443e85ef883b747be5194565b0f18
 release-assistant 33959e17b6a0b4f7eaa80f6af8e8967b585648a2
 demo-app bf8242fdb980c6e89ea98d507dfeebdcecf7c447
+taskflow-web 81dab3ca790a55e3ba6d3192adc276d2d0c7d7d5
