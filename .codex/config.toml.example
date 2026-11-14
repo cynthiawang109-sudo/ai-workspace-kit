@@ -37,14 +37,14 @@
 # Atlassian's official remote MCP server for Jira and Confluence.
 # After adding this block, run `codex mcp login atlassian` and approve in
 # the browser (OAuth; no token in this file).
-# The older /v1/mcp endpoint is deprecated and is removed on 2027-03-01;
+# The older /v1/mcp endpoint is deprecated in favour of /v2/mcp;
 # use /v2/mcp.
 #
 # [mcp_servers.atlassian]
 # url = "https://mcp.atlassian.com/v2/mcp"
 
-# GitLab via zereight gitlab-mcp in Docker, the same server the original
-# Entmoot used. Docker Desktop must be running.
+# GitLab via zereight gitlab-mcp in Docker.
+# Docker Desktop must be running.
 # Pull zereight050/gitlab-mcp:latest first in your own terminal:
 #   docker pull zereight050/gitlab-mcp:latest
 # Docker's credential helper may fail in non-interactive sessions.
