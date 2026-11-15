@@ -3,7 +3,8 @@ name = "taskflow-doc-search"
 version = "0.1.0"
 description = "MCP server for keyword search over the ai-workspace-kit documentation repos and demo tickets"
 readme = "README.md"
-license = "LicenseRef-Proprietary"
+license = "MIT"
+license-files = ["LICENSE"]
 requires-python = ">=3.10"
 dependencies = ["fastmcp>=4.1.7"]
 
