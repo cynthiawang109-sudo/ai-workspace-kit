@@ -4,18 +4,17 @@ Version 0.1.0 is prepared locally; neither PyPI nor MCP registry publication
 has been performed. The PyPI JSON endpoint returned HTTP 404 when preparing
 this package; availability is not a reservation.
 
+The project is licensed under MIT; see the root [LICENSE](../../LICENSE).
+The distribution metadata in `pyproject.toml` declares `MIT`.
+
 ## One-time owner setup
 
-1. Confirm the repository license and distribution metadata before release.
-   The repository currently has no license file or grant; metadata uses
-   `LicenseRef-Proprietary` to reflect that status, rather than inventing an
-   open-source license. The owner should resolve licensing before publishing.
-2. Sign in to pypi.org and open
+1. Sign in to pypi.org and open
    [Publishing](https://pypi.org/manage/account/publishing/). Add a **pending
    publisher** using GitHub: project `taskflow-doc-search`, owner
    `cynthiawang109-sudo`, repository `ai-workspace-kit`, workflow filename
    `publish-doc-search.yml`, environment `pypi`.
-3. Create the GitHub repository environment `pypi`. Configure release branch/tag
+2. Create the GitHub repository environment `pypi`. Configure release branch/tag
    restrictions and any required reviewers appropriate for the repository.
    The environment name must exactly match the PyPI publisher configuration.
 
