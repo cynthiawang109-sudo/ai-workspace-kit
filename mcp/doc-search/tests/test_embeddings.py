@@ -30,8 +30,8 @@ def modules(tmp_path, monkeypatch):
         generated.write_text("# Generated\n\nzqxwv generated junk marker\n", encoding="utf-8")
     monkeypatch.setenv("AI_WORKSPACE_ROOT", str(tmp_path))
     monkeypatch.setenv("DOC_SEARCH_EMBEDDER", "fake")
-    import server
-    import embeddings
+    from doc_search import server
+    from doc_search import embeddings
 
     importlib.reload(server)
     importlib.reload(embeddings)

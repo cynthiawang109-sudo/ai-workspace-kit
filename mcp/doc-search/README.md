@@ -101,3 +101,20 @@ claude mcp add doc-search -- C:\path\to\ai-workspace-kit\mcp\doc-search\.venv\Sc
 
 The server finds the workspace root from its own location
 (`<root>/mcp/doc-search/server.py`); set `AI_WORKSPACE_ROOT` to override.
+
+
+## Install the distribution
+
+Once published, install with `pip install taskflow-doc-search` (or
+`pip install "taskflow-doc-search[embeddings]"` for sentence embeddings).
+For a local checkout, `pip install .` from this directory works today.
+Run `taskflow-doc-search` with `AI_WORKSPACE_ROOT` set to the absolute path
+of the workspace to search. It serves MCP over stdio; no command arguments
+are needed. The existing `python server.py` launcher and its automatic
+workspace-root detection remain supported.
+
+Release instructions: [PUBLISHING.md](PUBLISHING.md).
+The included [server.json](server.json) is prepared for an optional MCP
+registry listing and has not been published.
+
+<!-- mcp-name: io.github.cynthiawang109-sudo/taskflow-doc-search -->

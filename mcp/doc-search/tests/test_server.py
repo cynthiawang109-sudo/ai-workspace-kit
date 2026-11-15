@@ -43,7 +43,7 @@ def server_mod(tmp_path, monkeypatch):
         encoding="utf-8",
     )
     monkeypatch.setenv("AI_WORKSPACE_ROOT", str(tmp_path))
-    import server
+    from doc_search import server
 
     importlib.reload(server)
     return server

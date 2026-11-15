@@ -1,0 +1,36 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "io.github.cynthiawang109-sudo/taskflow-doc-search",
+  "description": "Search local TaskFlow workspace documentation and read tickets over MCP stdio.",
+  "repository": {
+    "url": "https://github.com/cynthiawang109-sudo/ai-workspace-kit",
+    "source": "github",
+    "subfolder": "mcp/doc-search"
+  },
+  "version": "0.1.0",
+  "packages": [
+    {
+      "registryType": "pypi",
+      "registryBaseUrl": "https://pypi.org",
+      "identifier": "taskflow-doc-search",
+      "version": "0.1.0",
+      "runtimeHint": "uvx",
+      "transport": {
+        "type": "stdio"
+      },
+      "environmentVariables": [
+        {
+          "name": "AI_WORKSPACE_ROOT",
+          "description": "Absolute path to the workspace containing projects/ and tickets/.",
+          "isRequired": true,
+          "format": "string"
+        }
+      ]
+    }
+  ],
+  "_meta": {
+    "io.modelcontextprotocol.registry/publisher-provided": {
+      "publicationStatus": "prepared-not-yet-published"
+    }
+  }
+}
