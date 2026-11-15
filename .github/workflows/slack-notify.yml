@@ -1,0 +1,37 @@
+name: Slack notification
+
+on:
+  workflow_call:
+    inputs:
+      text:
+        description: Message to send to the workspace Slack channel
+        required: true
+        type: string
+    secrets:
+      SLACK_WEBHOOK_URL:
+        required: false
+
+permissions: {}
+
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Send Slack notification
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+          SLACK_TEXT: ${{ inputs.text }}
+        run: |
+          if [ -z "$SLACK_WEBHOOK_URL" ]; then
+            echo "::notice::SLACK_WEBHOOK_URL is empty; skipping Slack notification."
+            exit 0
+          fi
+          python3 - <<'PY' > payload.json
+          import json
+          import os
+          print(json.dumps({"text": os.environ["SLACK_TEXT"]}))
+          PY
+          curl --fail --silent --show-error --output /dev/null \
+            --header 'Content-Type: application/json' \
+            --data-binary @payload.json \
+            "$SLACK_WEBHOOK_URL"

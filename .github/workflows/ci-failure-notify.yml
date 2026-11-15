@@ -1,0 +1,19 @@
+name: Notify CI failures
+
+on:
+  workflow_run:
+    workflows: [CodeQL, security]
+    types: [completed]
+    branches: [main]
+
+permissions: {}
+
+jobs:
+  notify:
+    if: ${{ github.event.workflow_run.conclusion == 'failure' }}
+    uses: ./.github/workflows/slack-notify.yml
+    with:
+      text: >-
+        CI failure: ${{ github.event.workflow_run.name }} in
+        ${{ github.repository }}. Run: ${{ github.event.workflow_run.html_url }}
+    secrets: inherit

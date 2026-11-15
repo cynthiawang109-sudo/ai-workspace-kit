@@ -11,7 +11,20 @@ permissions:
 jobs:
   build:
     runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.release-version.outputs.version }}
     steps:
+      - name: Read release version
+        id: release-version
+        env:
+          RELEASE_TAG: ${{ github.event.release.tag_name }}
+        run: |
+          python3 - <<'PY'
+          import os
+          version = os.environ["RELEASE_TAG"].removeprefix("doc-search-v")
+          with open(os.environ["GITHUB_OUTPUT"], "a") as output:
+              print(f"version={version}", file=output)
+          PY
       - uses: actions/checkout@v7
       - uses: actions/setup-python@v7
         with:
@@ -46,3 +59,13 @@ jobs:
           path: dist/
       - name: Publish to PyPI using Trusted Publishing
         uses: pypa/gh-action-pypi-publish@release/v1
+
+  notify:
+    needs: [build, publish]
+    if: ${{ success() && github.event_name == 'release' }}
+    uses: ./.github/workflows/slack-notify.yml
+    with:
+      text: >-
+        Published taskflow-doc-search ${{ needs.build.outputs.version }} to PyPI:
+        https://pypi.org/project/taskflow-doc-search/
+    secrets: inherit
