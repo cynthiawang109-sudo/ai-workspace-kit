@@ -135,6 +135,29 @@ Run sync to materialize the new pins, verify the combination, then commit
 - **Secrets live outside the repo.** Tokens are read from environment
   variables; only `*.example` templates are committed.
 
+## Slack notifications
+
+Notifications go to the workspace's Slack channel through an incoming webhook.
+The webhook URL lives only in the `SLACK_WEBHOOK_URL` GitHub Actions secret.
+An unset or empty secret skips delivery with a notice and succeeds.
+
+This repo notifies on `CodeQL` and `security` CI failures on `main`, and after
+successful doc-search release publication to PyPI, including the released version
+and project URL.
+
+Other kit repos can call the reusable workflow with `secrets: inherit`; each repo
+needs its own `SLACK_WEBHOOK_URL` Actions secret. Use a commit SHA or release tag
+for `REF` in this job:
+
+```yaml
+jobs:
+  notify:
+    uses: cynthiawang109-sudo/ai-workspace-kit/.github/workflows/slack-notify.yml@REF
+    with:
+      text: "Workspace update"
+    secrets: inherit
+```
+
 ## Roadmap
 
 - **M1** — workspace skeleton: meta-repo, sync scripts, doc repos, demo app ✅

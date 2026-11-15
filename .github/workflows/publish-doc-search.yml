@@ -34,6 +34,8 @@ jobs:
   publish:
     needs: build
     runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.package-version.outputs.version }}
     environment:
       name: pypi
       url: https://pypi.org/p/taskflow-doc-search
@@ -44,5 +46,42 @@ jobs:
         with:
           name: doc-search-distributions
           path: dist/
+      - name: Read package version and validate release tag
+        id: package-version
+        env:
+          RELEASE_TAG: ${{ github.event.release.tag_name }}
+        run: |
+          python3 - <<'PY'
+          import os
+          from email.parser import BytesParser
+          from pathlib import Path
+          from zipfile import ZipFile
+
+          wheel, = Path("dist").glob("*.whl")
+          with ZipFile(wheel) as archive:
+              metadata_path, = (
+                  name for name in archive.namelist()
+                  if name.endswith(".dist-info/METADATA")
+              )
+              metadata = BytesParser().parsebytes(archive.read(metadata_path))
+          version = metadata["Version"]
+          if not version:
+              raise SystemExit("Wheel METADATA is missing Version")
+          tag = os.environ["RELEASE_TAG"]
+          if tag.startswith("doc-search-v") and tag.removeprefix("doc-search-v") != version:
+              raise SystemExit(f"Release tag {tag!r} does not match package version {version!r}")
+          with open(os.environ["GITHUB_OUTPUT"], "a") as output:
+              print(f"version={version}", file=output)
+          PY
       - name: Publish to PyPI using Trusted Publishing
         uses: pypa/gh-action-pypi-publish@release/v1
+
+  notify:
+    needs: publish
+    if: ${{ success() && github.event_name == 'release' }}
+    uses: ./.github/workflows/slack-notify.yml
+    with:
+      text: >-
+        Published taskflow-doc-search ${{ needs.publish.outputs.version }} to PyPI:
+        https://pypi.org/project/taskflow-doc-search/
+    secrets: inherit
