@@ -68,7 +68,7 @@ def main():
     Read back every created or updated page to verify its content before recording success.
     Do not create or modify anything else. Do not modify state.json; the driver handles it. When finished, write a JSON file to {results_path} containing a list of objects with: key, title, pageId, url, action ("created" or "updated"). Then print a one-line-per-page summary."""
 
-    process = subprocess.run([executable, "exec", "-"], cwd=WS, input=PROMPT,
+    process = subprocess.run([executable, "exec", "--sandbox", "workspace-write", "-"], cwd=WS, input=PROMPT,
                              capture_output=True, text=True, encoding="utf-8", errors="replace")
     print(process.stdout or "")
     print(process.stderr or "", file=sys.stderr)

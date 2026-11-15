@@ -32,7 +32,7 @@ The generated home page, README section pages, ADR index and OpenAPI wrapper
 also retain the original content rules.
 
 `run_sync.py`, adapted from `codex_conf_sync.py`, delegates MCP writes to
-`codex exec -`, using the workspace's configured Atlassian MCP and OAuth
+`codex exec --sandbox workspace-write -`, using the workspace's configured Atlassian MCP and OAuth
 connection. Codex must already be installed, signed in, and able to use that
 connection. The driver looks for `codex` on PATH, then falls back to
 `%LOCALAPPDATA%\Programs\OpenAI\Codex\bin\codex.exe` (the standard per-user
