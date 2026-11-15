@@ -7,3 +7,8 @@ projects/*
 .venv/
 __pycache__/
 mcp/doc-search/.index/
+
+# Python distribution artifacts
+mcp/doc-search/dist/
+mcp/doc-search/build/
+mcp/doc-search/*.egg-info/

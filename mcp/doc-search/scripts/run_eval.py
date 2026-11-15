@@ -12,8 +12,8 @@ ROOT = SERVER_DIR.parents[1]
 sys.path.insert(0, str(SERVER_DIR))
 os.environ["AI_WORKSPACE_ROOT"] = str(ROOT)
 
-import server
-from embeddings import DEFAULT_MODEL
+from doc_search import server
+from doc_search.embeddings import DEFAULT_MODEL
 
 
 def main():

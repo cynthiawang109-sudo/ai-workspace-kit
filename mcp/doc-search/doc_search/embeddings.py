@@ -11,14 +11,22 @@ import re
 from functools import lru_cache
 from pathlib import Path
 
+from .server import ROOT
 
-INDEX_DIR = Path(__file__).resolve().parent / ".index"
+# Keep the checkout cache beside the compatibility launcher, even when the
+# workspace is overridden. Installed packages cache under the workspace,
+# avoiding writes to site-packages.
+_SERVER_DIR = Path(__file__).resolve().parents[1]
+INDEX_DIR = (
+    _SERVER_DIR if (_SERVER_DIR / "server.py").is_file()
+    else ROOT / "mcp" / "doc-search"
+) / ".index"
 DEFAULT_MODEL = "sentence-transformers/all-MiniLM-L6-v2"
 
 
 class _FakeEmbedder:
     def encode(self, texts):
-        from server import _tokenize
+        from .server import _tokenize
 
         vectors = []
         for text in texts:
@@ -39,7 +47,7 @@ class _RealEmbedder:
             raise RuntimeError(
                 "sentence-transformers is not installed; "
                 "install the optional embeddings dependencies with: "
-                "pip install -r requirements-embeddings.txt"
+                "pip install taskflow-doc-search[embeddings]"
             ) from exc
         self.model = SentenceTransformer(model)
 
@@ -70,7 +78,7 @@ def chunk_document(path, text):
     The preamble uses the document title. Empty section bodies are retained
     so a heading alone remains searchable. Fenced code is treated as body.
     """
-    from server import ROOT, _doc_title
+    from .server import ROOT, _doc_title
 
     path = Path(path)
     title = _doc_title(text, path)
@@ -134,7 +142,7 @@ def build_index(documents, manifest):
 
 def load_index():
     """Reuse the cache only when corpus bytes, model and embedder match."""
-    from server import ROOT, _iter_docs
+    from .server import ROOT, _iter_docs
 
     documents = [(p, p.read_bytes()) for p in _iter_docs()]
     hashes = sorted((p.relative_to(ROOT).as_posix(), hashlib.sha256(b).hexdigest())
@@ -158,7 +166,7 @@ def load_index():
 
 def search(query, limit=8):
     """Rank section chunks by pure-Python cosine; cache writes are local."""
-    from server import _tokenize
+    from .server import _tokenize
 
     if limit <= 0 or not _tokenize(query):
         return []

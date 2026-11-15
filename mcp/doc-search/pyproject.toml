@@ -1,19 +1,30 @@
 [project]
-name = "doc-search"
+name = "taskflow-doc-search"
 version = "0.1.0"
 description = "MCP server for keyword search over the ai-workspace-kit documentation repos and demo tickets"
+readme = "README.md"
+license = "MIT"
+license-files = ["LICENSE"]
 requires-python = ">=3.10"
 dependencies = ["fastmcp>=4.1.7"]
 
 [project.optional-dependencies]
 dev = ["pytest>=9.2.0"]
+embeddings = ["sentence-transformers>=3"]
+
+[project.scripts]
+taskflow-doc-search = "doc_search.server:main"
+
+[project.urls]
+Repository = "https://github.com/cynthiawang109-sudo/ai-workspace-kit"
+Documentation = "https://github.com/cynthiawang109-sudo/ai-workspace-kit/tree/main/mcp/doc-search"
 
 [build-system]
 requires = ["setuptools>=84.2.1"]
 build-backend = "setuptools.build_meta"
 
 [tool.setuptools]
-py-modules = ["server", "embeddings"]
+packages = ["doc_search"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
