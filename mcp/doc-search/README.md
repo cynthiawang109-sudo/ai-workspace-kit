@@ -1,3 +1,5 @@
+<!-- mcp-name: io.github.cynthiawang109-sudo/taskflow-doc-search -->
+
 # doc-search MCP server
 
 A small [MCP](https://modelcontextprotocol.io) server written with FastMCP.
@@ -116,5 +118,3 @@ workspace-root detection remain supported.
 Release instructions: [PUBLISHING.md](PUBLISHING.md).
 The included [server.json](server.json) is prepared for an optional MCP
 registry listing and has not been published.
-
-<!-- mcp-name: io.github.cynthiawang109-sudo/taskflow-doc-search -->
