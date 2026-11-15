@@ -1,0 +1,167 @@
+{
+  "site": "cynthia-taskflow.atlassian.net",
+  "spaceKey": "TASKFLOW",
+  "pages": [
+    {
+      "key": "home",
+      "title": "TaskFlow documentation",
+      "pageId": "327681",
+      "url": "https://cynthia-taskflow.atlassian.net/wiki/spaces/TASKFLOW/pages/327681",
+      "sha256": "332997dee2a7be4e"
+    },
+    {
+      "key": "sec-docs",
+      "title": "taskflow-docs",
+      "pageId": "65810",
+      "url": "https://cynthia-taskflow.atlassian.net/wiki/spaces/TASKFLOW/pages/65810/taskflow-docs",
+      "sha256": "fd0b2c27a6d9a67b"
+    },
+    {
+      "key": "sec-api",
+      "title": "taskflow-api-docs",
+      "pageId": "327747",
+      "url": "https://cynthia-taskflow.atlassian.net/wiki/spaces/TASKFLOW/pages/327747/taskflow-api-docs",
+      "sha256": "6b22ebd2cae48d54"
+    },
+    {
+      "key": "taskflow-docs-system-overview",
+      "title": "TaskFlow — system overview",
+      "pageId": "65830",
+      "url": "https://cynthia-taskflow.atlassian.net/wiki/spaces/TASKFLOW/pages/65830/TaskFlow+system+overview",
+      "sha256": "cbbfd02e9e145eb4"
+    },
+    {
+      "key": "taskflow-docs-architecture",
+      "title": "TaskFlow — architecture",
+      "pageId": "131273",
+      "url": "https://cynthia-taskflow.atlassian.net/wiki/spaces/TASKFLOW/pages/131273/TaskFlow+architecture",
+      "sha256": "aff8b24f9d3bd529"
+    },
+    {
+      "key": "taskflow-docs-authentication",
+      "title": "TaskFlow — authentication",
+      "pageId": "131289",
+      "url": "https://cynthia-taskflow.atlassian.net/wiki/spaces/TASKFLOW/pages/131289/TaskFlow+authentication",
+      "sha256": "595c5b5b50703239"
+    },
+    {
+      "key": "taskflow-docs-security",
+      "title": "TaskFlow — security",
+      "pageId": "98651",
+      "url": "https://cynthia-taskflow.atlassian.net/wiki/spaces/TASKFLOW/pages/98651/TaskFlow+security",
+      "sha256": "69a86ab7cd534fff"
+    },
+    {
+      "key": "taskflow-docs-deployment",
+      "title": "TaskFlow — deployment",
+      "pageId": "131305",
+      "url": "https://cynthia-taskflow.atlassian.net/wiki/spaces/TASKFLOW/pages/131305/TaskFlow+deployment",
+      "sha256": "81a6fd5656d14073"
+    },
+    {
+      "key": "taskflow-docs-environments",
+      "title": "TaskFlow — environments",
+      "pageId": "131321",
+      "url": "https://cynthia-taskflow.atlassian.net/wiki/spaces/TASKFLOW/pages/131321/TaskFlow+environments",
+      "sha256": "5316a08782950045"
+    },
+    {
+      "key": "taskflow-docs-observability",
+      "title": "TaskFlow — observability",
+      "pageId": "131337",
+      "url": "https://cynthia-taskflow.atlassian.net/wiki/spaces/TASKFLOW/pages/131337/TaskFlow+observability",
+      "sha256": "316b707e5b74cf7a"
+    },
+    {
+      "key": "taskflow-docs-backup-and-recovery",
+      "title": "TaskFlow — backup and recovery",
+      "pageId": "327697",
+      "url": "https://cynthia-taskflow.atlassian.net/wiki/spaces/TASKFLOW/pages/327697/TaskFlow+backup+and+recovery",
+      "sha256": "034daed1f9ef5ee0"
+    },
+    {
+      "key": "taskflow-docs-incident-runbook",
+      "title": "TaskFlow — incident runbook (first response)",
+      "pageId": "131353",
+      "url": "https://cynthia-taskflow.atlassian.net/wiki/spaces/TASKFLOW/pages/131353/TaskFlow+incident+runbook+first+response",
+      "sha256": "d8a7311bb43da1d1"
+    },
+    {
+      "key": "taskflow-api-docs-api-conventions",
+      "title": "TaskFlow — API conventions",
+      "pageId": "327767",
+      "url": "https://cynthia-taskflow.atlassian.net/wiki/spaces/TASKFLOW/pages/327767/TaskFlow+API+conventions",
+      "sha256": "a2fd1fc96c1076ca"
+    },
+    {
+      "key": "taskflow-api-docs-data-model",
+      "title": "TaskFlow — data model (core tables)",
+      "pageId": "98700",
+      "url": "https://cynthia-taskflow.atlassian.net/wiki/spaces/TASKFLOW/pages/98700/TaskFlow+data+model+core+tables",
+      "sha256": "074d4574e4c8c354"
+    },
+    {
+      "key": "taskflow-api-docs-endpoints",
+      "title": "TaskFlow — endpoint reference (production API)",
+      "pageId": "65862",
+      "url": "https://cynthia-taskflow.atlassian.net/wiki/spaces/TASKFLOW/pages/65862/TaskFlow+endpoint+reference+production+API",
+      "sha256": "3621dcacf551cfdb"
+    },
+    {
+      "key": "taskflow-api-docs-errors",
+      "title": "TaskFlow — error code catalog",
+      "pageId": "327783",
+      "url": "https://cynthia-taskflow.atlassian.net/wiki/spaces/TASKFLOW/pages/327783/TaskFlow+error+code+catalog",
+      "sha256": "2fc23088052c2379"
+    },
+    {
+      "key": "taskflow-api-docs-rate-limiting",
+      "title": "TaskFlow — rate limiting",
+      "pageId": "65878",
+      "url": "https://cynthia-taskflow.atlassian.net/wiki/spaces/TASKFLOW/pages/65878/TaskFlow+rate+limiting",
+      "sha256": "9edbc2704ad6730e"
+    },
+    {
+      "key": "taskflow-api-docs-webhooks",
+      "title": "TaskFlow — webhooks",
+      "pageId": "65894",
+      "url": "https://cynthia-taskflow.atlassian.net/wiki/spaces/TASKFLOW/pages/65894/TaskFlow+webhooks",
+      "sha256": "1d4d7b6abf5d50e5"
+    },
+    {
+      "key": "adr-index",
+      "title": "Architecture decision records",
+      "pageId": "327713",
+      "url": "https://cynthia-taskflow.atlassian.net/wiki/spaces/TASKFLOW/pages/327713/Architecture+decision+records",
+      "sha256": "cae400612c445b75"
+    },
+    {
+      "key": "taskflow-docs-adr-0001-postgresql-primary-store",
+      "title": "ADR-0001: PostgreSQL as the primary store",
+      "pageId": "98667",
+      "url": "https://cynthia-taskflow.atlassian.net/wiki/spaces/TASKFLOW/pages/98667/ADR-0001+PostgreSQL+as+the+primary+store",
+      "sha256": "8d686fd9ccabdbc9"
+    },
+    {
+      "key": "taskflow-docs-adr-0002-cursor-pagination",
+      "title": "ADR-0002: Cursor pagination for all list endpoints",
+      "pageId": "98683",
+      "url": "https://cynthia-taskflow.atlassian.net/wiki/spaces/TASKFLOW/pages/98683/ADR-0002+Cursor+pagination+for+all+list+endpoints",
+      "sha256": "1f967921f5c54484"
+    },
+    {
+      "key": "taskflow-docs-adr-0003-rq-over-celery",
+      "title": "ADR-0003: RQ for background jobs, over Celery",
+      "pageId": "65846",
+      "url": "https://cynthia-taskflow.atlassian.net/wiki/spaces/TASKFLOW/pages/65846/ADR-0003+RQ+for+background+jobs+over+Celery",
+      "sha256": "37f17263d7c0cb31"
+    },
+    {
+      "key": "openapi",
+      "title": "OpenAPI specification",
+      "pageId": "131370",
+      "url": "https://cynthia-taskflow.atlassian.net/wiki/spaces/TASKFLOW/pages/131370/OpenAPI+specification",
+      "sha256": "aeeee3b38e0754e5"
+    }
+  ]
+}

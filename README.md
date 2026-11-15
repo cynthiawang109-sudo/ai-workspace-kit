@@ -69,6 +69,7 @@ flowchart TB
 | `AGENTS.md` | Workspace conventions every agent session follows (read order, cross-repo references, write governance) |
 | `CLAUDE.md` | Thin pointer to `AGENTS.md` so Claude clients land in the same place |
 | `.codex/config.toml.example` | MCP server registration template — secrets come from environment variables, never from this repo |
+| `confluence-mirror/` | Incremental mirror of the two documentation repos into Confluence |
 | `mcp/` | The custom `doc-search` MCP server (milestone M2) |
 | `projects/` | Synced checkouts (git-ignored; each is its own repository) |
 
