@@ -1,7 +1,7 @@
 # Publishing taskflow-doc-search
 
-Version 0.1.0 has been published to PyPI. Version 0.1.1 is being prepared
-for release, and MCP registry submission is in progress.
+Version 0.1.0 has been published to PyPI. Version 0.1.1 publication is pending,
+and MCP registry submission is in progress.
 
 The project is licensed under MIT; see the root [LICENSE](../../LICENSE).
 The distribution metadata in `pyproject.toml` declares `MIT`.
@@ -78,6 +78,7 @@ its pinned schema and follow the official
 Authenticate ownership of `io.github.cynthiawang109-sudo`, confirm the package
 README's `mcp-name` ownership marker, and publish with the registry publisher.
 The manifest describes PyPI installation using `uvx`, stdio transport, and the
-required workspace environment variable. Its publisher metadata records completed PyPI publication and an MCP registry
-submission in progress; update that status as publication progresses.
+required workspace environment variable. Its publisher metadata records that
+PyPI 0.1.0 is published, 0.1.1 publication is pending, and MCP registry
+submission is in progress; update that status as publication progresses.
 Registry listing is separate from the PyPI workflow and is not automatic.

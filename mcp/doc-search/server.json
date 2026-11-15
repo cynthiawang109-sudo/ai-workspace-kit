@@ -30,7 +30,7 @@
   ],
   "_meta": {
     "io.modelcontextprotocol.registry/publisher-provided": {
-      "publicationStatus": "PyPI publication complete; MCP registry submission in progress"
+      "publicationStatus": "PyPI 0.1.0 published; 0.1.1 pending; MCP registry submission in progress"
     }
   }
 }
