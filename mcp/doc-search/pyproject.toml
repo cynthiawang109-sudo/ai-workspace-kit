@@ -1,6 +1,6 @@
 [project]
 name = "taskflow-doc-search"
-version = "0.1.0"
+version = "0.1.1"
 description = "MCP server for keyword search over the ai-workspace-kit documentation repos and demo tickets"
 readme = "README.md"
 license = "MIT"

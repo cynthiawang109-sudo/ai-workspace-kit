@@ -103,6 +103,19 @@ def test_get_doc_roundtrip_and_traversal_guard(server_mod):
         call(server_mod, "get_doc", {"path": "../outside.md"})
 
 
+@pytest.mark.parametrize("root", ["projects", "tickets"])
+def test_get_doc_refuses_prefix_sibling(server_mod, tmp_path, root):
+    sibling = tmp_path / f"{root}-other"
+    sibling.mkdir()
+    (sibling / "outside.md").write_text("# Outside\n", encoding="utf-8")
+
+    with pytest.raises(Exception, match="document not found or not allowed"):
+        call(server_mod, "get_doc", {"path": f"{root}-other/outside.md"})
+
+    legitimate = "projects/demo-docs/api.md" if root == "projects" else "tickets/TF-1.md"
+    assert call(server_mod, "get_doc", {"path": legitimate})
+
+
 def test_list_tickets_and_status_filter(server_mod):
     all_tickets = call(server_mod, "list_tickets", {})
     assert {t["id"] for t in all_tickets} == {"TF-1", "TF-2"}

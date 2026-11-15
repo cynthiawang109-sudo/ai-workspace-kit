@@ -237,7 +237,7 @@ def get_doc(path: str) -> str:
     if (
         target.suffix != ".md"
         or not target.exists()
-        or not any(str(target).startswith(str(a)) for a in allowed)
+        or not any(target.is_relative_to(root) for root in allowed)
     ):
         raise ValueError(f"document not found or not allowed: {path}")
     return target.read_text(encoding="utf-8", errors="replace")

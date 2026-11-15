@@ -1,8 +1,7 @@
 # Publishing taskflow-doc-search
 
-Version 0.1.0 is prepared locally; neither PyPI nor MCP registry publication
-has been performed. The PyPI JSON endpoint returned HTTP 404 when preparing
-this package; availability is not a reservation.
+Version 0.1.0 has been published to PyPI. Version 0.1.1 publication is pending,
+and MCP registry submission is in progress.
 
 The project is licensed under MIT; see the root [LICENSE](../../LICENSE).
 The distribution metadata in `pyproject.toml` declares `MIT`.
@@ -33,8 +32,8 @@ python -m pip install ".[dev]" build twine
 python -m pytest -q
 python -m build
 python -m twine check dist/*
-python -m zipfile -l dist/taskflow_doc_search-0.1.0-py3-none-any.whl
-python -m tarfile -l dist/taskflow_doc_search-0.1.0.tar.gz
+python -m zipfile -l dist/taskflow_doc_search-0.1.1-py3-none-any.whl
+python -m tarfile -l dist/taskflow_doc_search-0.1.1.tar.gz
 ```
 
 Inspect metadata for name, version, license, Python requirement, base dependency,
@@ -62,7 +61,7 @@ temporary environment and build output.
 1. Update the version in `pyproject.toml` and both version fields in
    `server.json`; complete the local checks above and merge the approved change.
 2. Create a version tag on the intended commit (for example
-   `doc-search-v0.1.0`) and **publish a GitHub Release** for it.
+   `doc-search-v0.1.1`) and **publish a GitHub Release** for it.
 3. The workflow runs tests, builds and checks sdist/wheel, then publishes via
    OIDC after any environment review. Inspect the workflow and PyPI files.
    Ordinary pushes do not publish. Any published GitHub Release triggers this
@@ -79,6 +78,7 @@ its pinned schema and follow the official
 Authenticate ownership of `io.github.cynthiawang109-sudo`, confirm the package
 README's `mcp-name` ownership marker, and publish with the registry publisher.
 The manifest describes PyPI installation using `uvx`, stdio transport, and the
-required workspace environment variable. Its publisher metadata currently marks
-it `prepared-not-yet-published`; update that status only after actual publication.
+required workspace environment variable. Its publisher metadata records that
+PyPI 0.1.0 is published, 0.1.1 publication is pending, and MCP registry
+submission is in progress; update that status as publication progresses.
 Registry listing is separate from the PyPI workflow and is not automatic.
