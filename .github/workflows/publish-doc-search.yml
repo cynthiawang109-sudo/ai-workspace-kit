@@ -25,7 +25,7 @@ jobs:
         run: python -m build mcp/doc-search
       - name: Check distribution metadata
         run: python -m twine check mcp/doc-search/dist/*
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: doc-search-distributions
           path: mcp/doc-search/dist/*
